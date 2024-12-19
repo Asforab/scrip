@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Assistant with Web Scraping</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #response {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Assistant with Web Scraping</h1>
+  
+  <div class="input-group">
+    <label for="url">URL to Scrape (optional):</label>
+    <input type="url" id="url" placeholder="Enter URL to scrape">
+  </div>
+
+  <div class="input-group">
+    <label for="query">Your Query:</label>
+    <textarea id="query" rows="4" placeholder="Enter your question or prompt"></textarea>
+  </div>
+
+  <button onclick="processQuery()">Process</button>
+
+  <div id="response"></div>
+
+  <script>
+    async function processQuery() {
+      const responseDiv = document.getElementById('response');
+      const url = document.getElementById('url').value;
+      const query = document.getElementById('query').value;
+
+      if (!query) {
+        responseDiv.textContent = 'Please enter a query';
+        return;
+      }
+
+      responseDiv.textContent = 'Processing...';
+
+      try {
+        const response = await fetch('/process', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ url, query })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+          responseDiv.textContent = `Error: ${data.error}`;
+        } else {
+          responseDiv.textContent = data.response;
+        }
+      } catch (error) {
+        responseDiv.textContent = `Error: ${error.message}`;
+      }
+    }
+  </script>
+</body>
+</html>
